@@ -1,7 +1,8 @@
 from tkinter import *
 import math
 import warnings
-#warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+# warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 """"
 equal is only for operators e (exp button), ^(power), *(Multiply),
@@ -14,23 +15,24 @@ equal is only for operators e (exp button), ^(power), *(Multiply),
  1) there is a Syntax error in the mathematical expression. for example 3xx4, 3+x4, 4+(3, 4+3+ etc...
  2) there is a syntax error with the exp (EXP button)
  3) the variable "ans" was used before the "=" button as given a valid answer
- 
+
 """
 root = Tk()
 root.title("Scientific Calculator")
-root.config(bg = '#32323C')  #the RGB background color
-root.resizable(width=False,height= False) #makes the window unresizeable
-root.geometry("540x640+500+90") #the size of the window and the coords of where it opens
+root.config(bg='#32323C')  # the RGB background color
+root.resizable(width=False, height=False)  # makes the window unresizeable
+root.geometry("540x640+500+90")  # the size of the window and the coords of where it opens
 
-display = Entry(root, width=35, relief=RIDGE, bd=30,font=('David',20,'bold'), fg="black", bg="#E8E8E8")
-display.grid(row=0,column=0,columnspan=5,padx=30,pady=15)
-display.insert(0,'0')
+display = Entry(root, width=35, relief=RIDGE, bd=30, font=('David', 20, 'bold'), fg="black", bg="#E8E8E8")
+display.grid(row=0, column=0, columnspan=5, padx=30, pady=15)
+display.insert(0, '0')
 display.config(state='readonly')
 
-ans = [False, 0] #the 0 entry implies whether ans is valid or notm 1 entry is the value of the last answer.
+ans = [False, 0]  # the 0 entry implies whether ans is valid or notm 1 entry is the value of the last answer.
 
-#get a string as mathematical expression (where e = 10**, ^ = **), and converting it to a number.
-#throws exception if it can't be done, for example when str = "1++2e3"
+
+# get a string as mathematical expression (where e = 10**, ^ = **), and converting it to a number.
+# throws exception if it can't be done, for example when str = "1++2e3"
 def compute(Str):
     result = 0
     prblm = False
@@ -39,36 +41,37 @@ def compute(Str):
         if i >= len(Str):
             break
         if Str[i] == "A":
-            if Str[i-1].isdigit():
+            if Str[i - 1].isdigit():
                 Str = Str[:i] + "*" + Str[i:]
-                i+=1
+                i += 1
             if ans[0]:
-                Str = Str[0:i] + str(ans[1]) + Str[i+3:]
-                i+=1
+                Str = Str[0:i] + str(ans[1]) + Str[i + 3:]
+                i += 1
             else:
                 prblm = True
-                i+=1
+                i += 1
         elif Str[i] == "x":
-            Str = Str[0:i] + "*" + Str[i+1:]
-            i+=1
+            Str = Str[0:i] + "*" + Str[i + 1:]
+            i += 1
         elif Str[i] == "e":
-            if Str[i+1] == ')':
+            if Str[i + 1] == ')':
                 prblm = True
             if i != 0:
-                if Str[i-1].isdigit():
+                if Str[i - 1].isdigit():
                     Str = Str[0:i] + "*" + Str[i:]
-                    i+=1
-            Str = Str[0:i] + "10**" + Str[i+1:]
+                    i += 1
+            Str = Str[0:i] + "10**" + Str[i + 1:]
             i += 4
             continue
         elif Str[i] == "^":
-            Str = Str[0:i] + "**" + Str[i+1:]
-            i+=2
+            Str = Str[0:i] + "**" + Str[i + 1:]
+            i += 2
         else:
-            i+=1
+            i += 1
     if prblm:
         int("This statements bring an exception")
     return eval(Str)
+
 
 def checkValid():
     display.config(state='normal')
@@ -80,6 +83,7 @@ def checkValid():
         return (True, inp)
     except:
         return (False)
+
 
 def equalFunc(event):
     display.config(state='normal')
@@ -98,40 +102,44 @@ def equalFunc(event):
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
 
+
 def AC(event):
     display.config(state='normal')
     display.delete(0, END)
     display.config(state='readonly')
 
-#concatenating the button to the what currently represented in the display
+
+# concatenating the button to the what currently represented in the display
 def concat(event):
     display.config(state='normal')
     if display.get() == "Syntax Error":
         display.delete(0, END)
-    text=event.widget['text']
-    if text=="Mod":
+    text = event.widget['text']
+    if text == "Mod":
         text = "%"
-    if text=="EXP":
+    if text == "EXP":
         text = "e"
     display.insert(len(display.get()), text)
     display.config(state='readonly')
+
 
 def delet(event):
     display.config(state='normal')
     if display.get() == "Syntax Error" or display.get() == "":
         display.delete(0, END)
     elif display.get()[-1] == "s":
-        display.delete(len(display.get())-3, END)
+        display.delete(len(display.get()) - 3, END)
     else:
-        display.delete(len(display.get())-1, END)
+        display.delete(len(display.get()) - 1, END)
     display.config(state='readonly')
 
-#concatenating the numbers (when there's "0", it requires special treatment)
+
+# concatenating the numbers (when there's "0", it requires special treatment)
 def num(event):
     display.config(state='normal')
     if display.get() == "Syntax Error":
         display.delete(0, END)
-    text=event.widget['text']
+    text = event.widget['text']
     currStr = display.get()
     if currStr == "0":
         display.delete(0, END)
@@ -139,6 +147,7 @@ def num(event):
     else:
         display.insert(len(currStr), text)
     display.config(state='readonly')
+
 
 def factorl(event):
     valid = checkValid()
@@ -153,16 +162,18 @@ def factorl(event):
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
 
+
 def eexp(event):
     valid = checkValid()
     try:
-        ret = math.e**valid[1]
+        ret = math.e ** valid[1]
         display.insert(0, ret)
         ans[0] = True
         ans[1] = ret
     except:
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
+
 
 def cos(event):
     valid = checkValid()
@@ -175,6 +186,7 @@ def cos(event):
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
 
+
 def sin(event):
     valid = checkValid()
     try:
@@ -186,6 +198,7 @@ def sin(event):
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
 
+
 def tan(event):
     valid = checkValid()
     try:
@@ -196,6 +209,7 @@ def tan(event):
     except:
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
+
 
 def log(event):
     valid = checkValid()
@@ -210,6 +224,7 @@ def log(event):
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
 
+
 def ln(event):
     valid = checkValid()
     try:
@@ -222,6 +237,7 @@ def ln(event):
     except:
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
+
 
 def sqroot(event):
     valid = checkValid()
@@ -236,15 +252,16 @@ def sqroot(event):
         display.insert(0, "Syntax Error")
     display.config(state='readonly')
 
+
 nums = "789456123"
 numBtns = []
 index = 0
 for i in range(3):
     for j in range(3):
-        numBtns.append(Button(root, padx=25, pady=0,font=('arial',20),bd=5,text=nums[index], relief=RAISED))
-        numBtns[index].place(x=20+95*j,y=65*i+360)
-        numBtns[index].bind("<Button-1>",num)
-        index+=1
+        numBtns.append(Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text=nums[index], relief=RAISED))
+        numBtns[index].place(x=20 + 95 * j, y=65 * i + 360)
+        numBtns[index].bind("<Button-1>", num)
+        index += 1
 
 zero = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="0", relief=RAISED)
 zero.place(x=20, y=555)
@@ -273,15 +290,15 @@ plus.bind("<Button-1>", concat)
 minus = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="-", relief=RAISED)
 minus.place(x=400, y=555)
 minus.bind("<Button-1>", concat)
-#delete last character
+# delete last character
 delete = Button(root, padx=5, pady=0, font=('arial', 20), bd=5, text="DEL", relief=RAISED)
 delete.place(x=305, y=360)
-delete.bind("<Button-1>",delet)
+delete.bind("<Button-1>", delet)
 
 equal = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="=", relief=RAISED)
 equal.place(x=400, y=425)
 equal.bind("<Button-1>", equalFunc)
-#clears the entry
+# clears the entry
 clear = Button(root, padx=14, pady=0, font=('arial', 20), bd=5, text="AC", relief=RAISED)
 clear.place(x=400, y=360)
 clear.bind("<Button-1>", AC)
@@ -303,7 +320,7 @@ mod.place(x=35, y=295)
 mod.bind("<Button-1>", concat)
 
 factorial = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="!", relief=RAISED)
-factorial.place(x=112,y=295)
+factorial.place(x=112, y=295)
 factorial.bind("<Button-1>", factorl)
 
 openpt = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="(", relief=RAISED)
