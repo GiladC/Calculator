@@ -2,7 +2,8 @@ from tkinter import *
 import math
 import warnings
 
-# warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 """"
 equal is only for operators e (exp button), ^(power), *(Multiply),
@@ -97,6 +98,9 @@ def equalFunc(event):
         ans[1] = res
         display.delete(0, END)
         display.insert(0, res)
+    except OverflowError:
+        display.delete(0, END)
+        display.insert(0, "Result Too Large")
     except:
         display.delete(0, END)
         display.insert(0, "Syntax Error")
@@ -112,7 +116,7 @@ def AC(event):
 # concatenating the button to the what currently represented in the display
 def concat(event):
     display.config(state='normal')
-    if display.get() == "Syntax Error":
+    if (display.get() == "Syntax Error" or display.get() == "Math Error"):
         display.delete(0, END)
     text = event.widget['text']
     if text == "Mod":
@@ -125,7 +129,7 @@ def concat(event):
 
 def delet(event):
     display.config(state='normal')
-    if display.get() == "Syntax Error" or display.get() == "":
+    if display.get() == "Syntax Error" or display.get() == "" or display.get() == "Math Error":
         display.delete(0, END)
     elif display.get()[-1] == "s":
         display.delete(len(display.get()) - 3, END)
@@ -137,7 +141,7 @@ def delet(event):
 # concatenating the numbers (when there's "0", it requires special treatment)
 def num(event):
     display.config(state='normal')
-    if display.get() == "Syntax Error":
+    if (display.get() == "Syntax Error" or display.get() == "Math Error"):
         display.delete(0, END)
     text = event.widget['text']
     currStr = display.get()
@@ -148,110 +152,43 @@ def num(event):
         display.insert(len(currStr), text)
     display.config(state='readonly')
 
+funcdict = {"!" : lambda x: math.factorial(x), "eˣ" : lambda x: math.e**x, "cos" : lambda x: math.cos(x),
+            "sin" : lambda x: math.sin(x), "tan" : lambda x: math.tan(x), "log" : lambda x: math.log10(x),
+            "ln" : lambda x: math.log(x, math.e), chr(8730) : lambda x: math.sqrt(x), "tan⁻¹" : lambda x: math.atan(x),
+            "cos⁻¹" : lambda x: math.acos(x), "sin⁻¹" : lambda x: math.asin(x),
+            "sinh" : lambda x: math.sinh(x), "cosh" : lambda x: math.cosh(x), "tanh" : lambda x: math.tanh(x)}
 
-def factorl(event):
+trigs = {"sin⁻¹", "cos⁻¹", "tan⁻¹", "cos", "sin", "tan"}
+
+def mathfunc(event):
+    funcStr = event.widget['text']
     valid = checkValid()
     try:
-        ret = math.factorial(valid[1])
+        val = valid[1]
+        if trigs.__contains__(funcStr):
+            val = val*valdict[Bmode['text']]
+        ret = funcdict[funcStr](val)
         display.insert(0, ret)
         ans[0] = True
         ans[1] = ret
     except ValueError:
         display.insert(0, "Math Error")
+    except OverflowError:
+        display.insert(0, "Result Too Large")
     except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
+       display.insert(0, "Syntax Error")
 
+modedict = {"deg" : "rad", "rad" : "gra", "gra" : "deg"}
 
-def eexp(event):
-    valid = checkValid()
-    try:
-        ret = math.e ** valid[1]
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
+valdict = {"deg" : math.pi/180, "rad" : 1, "gra" : math.pi/200}
 
-
-def cos(event):
-    valid = checkValid()
-    try:
-        ret = math.cos(valid[1])
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
-
-
-def sin(event):
-    valid = checkValid()
-    try:
-        ret = math.sin(valid[1])
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
-
-
-def tan(event):
-    valid = checkValid()
-    try:
-        ret = math.tan(valid[1])
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
-
-
-def log(event):
-    valid = checkValid()
-    try:
-        ret = math.log10(valid[1])
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except ValueError:
-        display.insert(0, "Math Error")
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
-
-
-def ln(event):
-    valid = checkValid()
-    try:
-        ret = math.log(valid[1], math.e)
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except ValueError:
-        display.insert(0, "Math Error")
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
-
-
-def sqroot(event):
-    valid = checkValid()
-    try:
-        ret = math.sqrt(valid[1])
-        display.insert(0, ret)
-        ans[0] = True
-        ans[1] = ret
-    except ValueError:
-        display.insert(0, "Math Error")
-    except:
-        display.insert(0, "Syntax Error")
-    display.config(state='readonly')
-
+def modechange(event):
+    prevmode = event.widget['text']
+    event.widget['text'] = modedict[prevmode]
+    if prevmode == "gra":
+        event.widget['padx'] -=1
+    elif prevmode == "deg":
+        event.widget['padx'] +=1
 
 nums = "789456123"
 numBtns = []
@@ -315,51 +252,81 @@ answer = Button(root, padx=10, pady=0, font=('arial', 20), bd=5, text="Ans", rel
 answer.place(x=305, y=425)
 answer.bind("<Button-1>", concat)
 
-mod = Button(root, padx=3, pady=0, font=('arial', 13), bd=7, text="Mod", relief=RAISED)
+
+mod = Button(root, padx=5, pady=0, font=('arial', 13), bd=7, text="Mod", relief=RAISED)
 mod.place(x=35, y=295)
 mod.bind("<Button-1>", concat)
 
-factorial = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="!", relief=RAISED)
+factorial = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="!", relief=RAISED)
 factorial.place(x=112, y=295)
-factorial.bind("<Button-1>", factorl)
+factorial.bind("<Button-1>", mathfunc)
 
-openpt = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="(", relief=RAISED)
+openpt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="(", relief=RAISED)
 openpt.place(x=189, y=295)
 openpt.bind("<Button-1>", concat)
 
-clspt = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text=")", relief=RAISED)
+clspt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=")", relief=RAISED)
 clspt.place(x=266, y=295)
 clspt.bind("<Button-1>", concat)
 
-pwr = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="^", relief=RAISED)
+pwr = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="^", relief=RAISED)
 pwr.place(x=343, y=295)
 pwr.bind("<Button-1>", concat)
-EXPe = Button(root, padx=9, pady=0, font=('arial', 13), bd=7, text="e^x", relief=RAISED)
+EXPe = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="eˣ", relief=RAISED)
 EXPe.place(x=420, y=295)
-EXPe.bind("<Button-1>", eexp)
+EXPe.bind("<Button-1>", mathfunc)
 
-Bcos = Button(root, padx=5, pady=0, font=('arial', 13), bd=7, text="cos", relief=RAISED)
+Bcos = Button(root, padx=7, pady=0, font=('arial', 13), bd=7, text="cos", relief=RAISED)
 Bcos.place(x=35, y=240)
-Bcos.bind("<Button-1>", cos)
+Bcos.bind("<Button-1>", mathfunc)
 
-Bsin = Button(root, padx=8, pady=0, font=('arial', 13), bd=7, text="sin", relief=RAISED)
+Bsin = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="sin", relief=RAISED)
 Bsin.place(x=112, y=240)
-Bsin.bind("<Button-1>", sin)
+Bsin.bind("<Button-1>", mathfunc)
 
-Btan = Button(root, padx=8, pady=0, font=('arial', 13), bd=7, text="tan", relief=RAISED)
+Btan = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="tan", relief=RAISED)
 Btan.place(x=189, y=240)
-Btan.bind("<Button-1>", tan)
+Btan.bind("<Button-1>", mathfunc)
 
-Blog = Button(root, padx=8, pady=0, font=('arial', 13), bd=7, text="log", relief=RAISED)
+Blog = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="log", relief=RAISED)
 Blog.place(x=266, y=240)
-Blog.bind("<Button-1>", log)
+Blog.bind("<Button-1>", mathfunc)
 
-Bln = Button(root, padx=13, pady=0, font=('arial', 13), bd=7, text="ln", relief=RAISED)
+Bln = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="ln", relief=RAISED)
 Bln.place(x=343, y=240)
-Bln.bind("<Button-1>", ln)
+Bln.bind("<Button-1>", mathfunc)
 
-BSQroot = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text=chr(8730), relief=RAISED)
+BSQroot = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=chr(8730), relief=RAISED)
 BSQroot.place(x=420, y=240)
-BSQroot.bind("<Button-1>", sqroot)
+BSQroot.bind("<Button-1>", mathfunc)
+
+Barctan = Button(root, padx=1, pady=0, font=('arial', 13), bd=7, text="tan⁻¹", relief=RAISED)
+Barctan.place(x=35, y=185)
+Barctan.bind("<Button-1>", mathfunc)
+
+Barccos = Button(root, padx=0, pady=0, font=('arial', 13), bd=7, text="cos⁻¹", relief=RAISED)
+Barccos.place(x=112, y=185)
+Barccos.bind("<Button-1>", mathfunc)
+
+Barcsin = Button(root, padx=3, pady=0, font=('arial', 13), bd=7, text="sin⁻¹", relief=RAISED)
+Barcsin.place(x=189, y=185)
+Barcsin.bind("<Button-1>", mathfunc)
+
+Btanh = Button(root, padx=5, pady= 0, font=('arial', 13), bd=7, text="tanh", relief=RAISED)
+Btanh.place(x=266, y=185)
+Btanh.bind("<Button-1>", mathfunc)
+
+Bcosh = Button(root, padx=3, pady= 0, font=('arial', 13), bd=7, text="cosh", relief=RAISED)
+Bcosh.place(x=343, y=185)
+Btanh.bind("<Button-1>", mathfunc)
+
+Bsinh = Button(root, padx=8, pady= 0, font=('arial', 13), bd=7, text="sinh", relief=RAISED)
+Bsinh.place(x=420, y=185)
+Btanh.bind("<Button-1>", mathfunc)
+
+Bmode = Button(root, padx=7, pady=0, font=('arial', 13), bd=7, text="rad", relief=RAISED)
+Bmode.place(x=35, y=130)
+Bmode.bind("<Button-1>", modechange)
 
 root.mainloop()
+
