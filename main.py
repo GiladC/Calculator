@@ -41,7 +41,19 @@ def compute(Str):
     while True:
         if i >= len(Str):
             break
-        if Str[i] == "A":
+        elif Str[i] == "e":
+            if i > 0 and Str[i-1].isdigit():
+                Str = Str[:i] + "*" + Str[i:]
+                i+=1
+            Str = Str[:i] + str(math.e) + Str[i+1:]
+            i+=len(str(math.e))
+        elif Str[i] == "π":
+            if i > 0 and Str[i-1].isdigit():
+                Str = Str[0:i] + "*" + Str[i:]
+                i+=1
+            Str = Str[:i] + str(math.pi) + Str[i+1:]
+            i+=len(str(math.pi))-1
+        elif Str[i] == "A":
             if Str[i - 1].isdigit():
                 Str = Str[:i] + "*" + Str[i:]
                 i += 1
@@ -54,7 +66,7 @@ def compute(Str):
         elif Str[i] == "x":
             Str = Str[0:i] + "*" + Str[i + 1:]
             i += 1
-        elif Str[i] == "e":
+        elif Str[i] == "E":
             if Str[i + 1] == ')':
                 prblm = True
             if i != 0:
@@ -122,7 +134,7 @@ def concat(event):
     if text == "Mod":
         text = "%"
     if text == "EXP":
-        text = "e"
+        text = "E"
     display.insert(len(display.get()), text)
     display.config(state='readonly')
 
@@ -155,10 +167,11 @@ def num(event):
 funcdict = {"!" : lambda x: math.factorial(x), "eˣ" : lambda x: math.e**x, "cos" : lambda x: math.cos(x),
             "sin" : lambda x: math.sin(x), "tan" : lambda x: math.tan(x), "log" : lambda x: math.log10(x),
             "ln" : lambda x: math.log(x, math.e), chr(8730) : lambda x: math.sqrt(x), "tan⁻¹" : lambda x: math.atan(x),
-            "cos⁻¹" : lambda x: math.acos(x), "sin⁻¹" : lambda x: math.asin(x),
+            "cos⁻¹" : lambda x: math.acos(x), "sin⁻¹" : lambda x: math.asin(x), "x²" : lambda x: x**2,
             "sinh" : lambda x: math.sinh(x), "cosh" : lambda x: math.cosh(x), "tanh" : lambda x: math.tanh(x)}
 
-trigs = {"sin⁻¹", "cos⁻¹", "tan⁻¹", "cos", "sin", "tan"}
+trigs = {"cos", "sin", "tan"}
+invtrigs = {"sin⁻¹", "cos⁻¹", "tan⁻¹"}
 
 def mathfunc(event):
     funcStr = event.widget['text']
@@ -168,6 +181,8 @@ def mathfunc(event):
         if trigs.__contains__(funcStr):
             val = val*valdict[Bmode['text']]
         ret = funcdict[funcStr](val)
+        if invtrigs.__contains__(funcStr):
+            ret = ret/valdict[Bmode['text']]
         display.insert(0, ret)
         ans[0] = True
         ans[1] = ret
@@ -227,15 +242,15 @@ plus.bind("<Button-1>", concat)
 minus = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="-", relief=RAISED)
 minus.place(x=400, y=555)
 minus.bind("<Button-1>", concat)
-# delete last character
-delete = Button(root, padx=5, pady=0, font=('arial', 20), bd=5, text="DEL", relief=RAISED)
+
+delete = Button(root, padx=6, pady=0, font=('arial', 20), bd=5, text="DEL", relief=RAISED)
 delete.place(x=305, y=360)
 delete.bind("<Button-1>", delet)
 
 equal = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="=", relief=RAISED)
 equal.place(x=400, y=425)
 equal.bind("<Button-1>", equalFunc)
-# clears the entry
+
 clear = Button(root, padx=14, pady=0, font=('arial', 20), bd=5, text="AC", relief=RAISED)
 clear.place(x=400, y=360)
 clear.bind("<Button-1>", AC)
@@ -248,85 +263,96 @@ div = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="/", relief=R
 div.place(x=400, y=490)
 div.bind("<Button-1>", concat)
 
-answer = Button(root, padx=10, pady=0, font=('arial', 20), bd=5, text="Ans", relief=RAISED)
+answer = Button(root, padx=9, pady=0, font=('arial', 20), bd=5, text="Ans", relief=RAISED)
 answer.place(x=305, y=425)
 answer.bind("<Button-1>", concat)
 
 
 mod = Button(root, padx=5, pady=0, font=('arial', 13), bd=7, text="Mod", relief=RAISED)
-mod.place(x=35, y=295)
+mod.place(x=30, y=295)
 mod.bind("<Button-1>", concat)
 
 factorial = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="!", relief=RAISED)
-factorial.place(x=112, y=295)
+factorial.place(x=107, y=295)
 factorial.bind("<Button-1>", mathfunc)
 
 openpt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="(", relief=RAISED)
-openpt.place(x=189, y=295)
+openpt.place(x=184, y=295)
 openpt.bind("<Button-1>", concat)
 
 clspt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=")", relief=RAISED)
-clspt.place(x=266, y=295)
+clspt.place(x=261, y=295)
 clspt.bind("<Button-1>", concat)
 
 pwr = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="^", relief=RAISED)
-pwr.place(x=343, y=295)
+pwr.place(x=338, y=295)
 pwr.bind("<Button-1>", concat)
 EXPe = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="eˣ", relief=RAISED)
-EXPe.place(x=420, y=295)
+EXPe.place(x=415, y=295)
 EXPe.bind("<Button-1>", mathfunc)
 
 Bcos = Button(root, padx=7, pady=0, font=('arial', 13), bd=7, text="cos", relief=RAISED)
-Bcos.place(x=35, y=240)
+Bcos.place(x=30, y=240)
 Bcos.bind("<Button-1>", mathfunc)
 
 Bsin = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="sin", relief=RAISED)
-Bsin.place(x=112, y=240)
+Bsin.place(x=107, y=240)
 Bsin.bind("<Button-1>", mathfunc)
 
 Btan = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="tan", relief=RAISED)
-Btan.place(x=189, y=240)
+Btan.place(x=184, y=240)
 Btan.bind("<Button-1>", mathfunc)
 
 Blog = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="log", relief=RAISED)
-Blog.place(x=266, y=240)
+Blog.place(x=261, y=240)
 Blog.bind("<Button-1>", mathfunc)
 
 Bln = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="ln", relief=RAISED)
-Bln.place(x=343, y=240)
+Bln.place(x=338, y=240)
 Bln.bind("<Button-1>", mathfunc)
 
 BSQroot = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=chr(8730), relief=RAISED)
-BSQroot.place(x=420, y=240)
+BSQroot.place(x=415, y=240)
 BSQroot.bind("<Button-1>", mathfunc)
 
 Barctan = Button(root, padx=1, pady=0, font=('arial', 13), bd=7, text="tan⁻¹", relief=RAISED)
-Barctan.place(x=35, y=185)
+Barctan.place(x=30, y=185)
 Barctan.bind("<Button-1>", mathfunc)
 
 Barccos = Button(root, padx=0, pady=0, font=('arial', 13), bd=7, text="cos⁻¹", relief=RAISED)
-Barccos.place(x=112, y=185)
+Barccos.place(x=107, y=185)
 Barccos.bind("<Button-1>", mathfunc)
 
 Barcsin = Button(root, padx=3, pady=0, font=('arial', 13), bd=7, text="sin⁻¹", relief=RAISED)
-Barcsin.place(x=189, y=185)
+Barcsin.place(x=184, y=185)
 Barcsin.bind("<Button-1>", mathfunc)
 
 Btanh = Button(root, padx=5, pady= 0, font=('arial', 13), bd=7, text="tanh", relief=RAISED)
-Btanh.place(x=266, y=185)
+Btanh.place(x=261, y=185)
 Btanh.bind("<Button-1>", mathfunc)
 
 Bcosh = Button(root, padx=3, pady= 0, font=('arial', 13), bd=7, text="cosh", relief=RAISED)
-Bcosh.place(x=343, y=185)
+Bcosh.place(x=338, y=185)
 Btanh.bind("<Button-1>", mathfunc)
 
 Bsinh = Button(root, padx=8, pady= 0, font=('arial', 13), bd=7, text="sinh", relief=RAISED)
-Bsinh.place(x=420, y=185)
+Bsinh.place(x=415, y=185)
 Btanh.bind("<Button-1>", mathfunc)
 
+Bpow = Button(root, padx=14, pady=0, font=('arial', 13), bd=7, text="x²", relief=RAISED)
+Bpow.place(x=107, y=130)
+Bpow.bind("<Button-1>", mathfunc)
+
 Bmode = Button(root, padx=7, pady=0, font=('arial', 13), bd=7, text="rad", relief=RAISED)
-Bmode.place(x=35, y=130)
+Bmode.place(x=30, y=130)
 Bmode.bind("<Button-1>", modechange)
 
-root.mainloop()
+Bpi = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="π", relief=RAISED)
+Bpi.place(x=338, y=130)
+Bpi.bind("<Button-1>", concat)
 
+Be = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="e", relief=RAISED)
+Be.place(x=415, y=130)
+Be.bind("<Button-1>", concat)
+
+root.mainloop()
