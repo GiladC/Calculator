@@ -35,11 +35,13 @@ display.config(state='readonly')
 ans = [False, 0]  # the 0 entry implies whether ans is valid or notm 1 entry is the value of the last answer.
 
 
-# get a string as mathematical expression (where e = 10**, ^ = **), and converting it to a number.
-# throws exception if it can't be done, for example when str = "1++2e3"
+""" 
+get a string as mathematical expression (where E = 10**, ^ = **, e = math.e, π = math.pi and, = last answer), 
+and converting it to a number by using the eval function.
+throws exception if it can't be done, for example when Str = "1++2e3".
+"""
 def compute(Str):
     result = 0
-    prblm = False
     i = 0
     while True:
         if i >= len(Str):
@@ -68,14 +70,13 @@ def compute(Str):
                 Str = Str[0:i] + str(ans[1]) + Str[i + 3:]
                 i += 1
             else:
-                prblm = True
-                i += 1
+                int("This statement bring an exception")
         elif Str[i] == "x":
             Str = Str[0:i] + "*" + Str[i + 1:]
             i += 1
         elif Str[i] == "E":
             if Str[i + 1] == ')':
-                prblm = True
+                int("this statement bring an exception")
             if i != 0:
                 if Str[i - 1].isdigit():
                     Str = Str[0:i] + "*" + Str[i:]
@@ -88,8 +89,6 @@ def compute(Str):
             i += 2
         else:
             i += 1
-    if prblm:
-        int("This statements bring an exception")
     return eval(Str)
 
 
@@ -97,7 +96,6 @@ def checkValid():
     display.config(state='normal')
     mathEx = display.get()
     display.delete(0, END)
-    display.config(state='normal')
     try:
         inp = compute(mathEx)
         return (True, inp)
@@ -207,6 +205,8 @@ def mathfunc(event):
         display.insert(0, "Result Too Large")
     except:
        display.insert(0, "Syntax Error")
+    finally:
+       display.config(state="readonly")
 
 modedict = {"deg" : "rad", "rad" : "gra", "gra" : "deg"}
 
@@ -226,18 +226,18 @@ index = 0
 #an easier way to generate all the buttons of the numbers 1,2,3,4,5,6,7,8,9
 for i in range(3):
     for j in range(3):
-        numBtns.append(Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text=nums[index], relief=RAISED))
+        numBtns.append(Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text=nums[index], relief=RAISED, bg="#898989", fg="white"))
         numBtns[index].place(x=20 + 95 * j, y=65 * i + 360)
         numBtns[index].bind("<Button-1>", num)
         index += 1
 
 #the button of the number zero
-zero = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="0", relief=RAISED)
+zero = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="0", relief=RAISED, bg="#898989", fg="white")
 zero.place(x=20, y=555)
 zero.bind("<Button-1>", num)
 
 #decimal point
-decimal = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text=".", relief=RAISED)
+decimal = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text=".", relief=RAISED, bg="#898989", fg="white")
 decimal.place(x=115, y=555)
 decimal.bind("<Button-1>", concat)
 """"
@@ -249,145 +249,145 @@ examples: ex3 is Syntax Error, e as the last char in the entry is a Syntax Error
 3*e5=3*10**5=300000, 3+e2 = 3+10**2 = 103, ee2 = 10**10**2 = 10**100,
 e+3 = 10**+3=10**3=100, e-1 = 10**-1=0.1
 """
-exp = Button(root, padx=7, pady=0, font=('arial', 20), bd=5, text="EXP", relief=RAISED)
+exp = Button(root, padx=7, pady=0, font=('arial', 20), bd=5, text="EXP", relief=RAISED, bg="#898989", fg="white")
 exp.place(x=210, y=555)
 exp.bind("<Button-1>", concat)
 
 #plus operator
-plus = Button(root, padx=24, pady=0, font=('arial', 20), bd=5, text="+", relief=RAISED)
-plus.place(x=305, y=555)
+plus = Button(root, padx=24, pady=0, font=('arial', 20), bd=5, text="+", relief=RAISED, bg="#898989", fg="white")
+plus.place(x=305, y=490)
 plus.bind("<Button-1>", concat)
 
 #minus operator
-minus = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="-", relief=RAISED)
-minus.place(x=400, y=555)
+minus = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="-", relief=RAISED, bg="#898989", fg="white")
+minus.place(x=400, y=490)
 minus.bind("<Button-1>", concat)
 """
 upon pressing the delete button the last character at the display is deleted. special cases are when the last thing is "Ans",
 and it deletes the 3 last characters (namely, deletes the Ans at the end). another special case is when there is either
 "Syntax Error", "Math Error" or "Result Too Large" on the display, then it operates like allclear (clears the entire display)
 """
-delete = Button(root, padx=6, pady=0, font=('arial', 20), bd=5, text="DEL", relief=RAISED)
+delete = Button(root, padx=6, pady=0, font=('arial', 20), bd=5, text="DEL", relief=RAISED, bg="#C64734", fg="white")
 delete.place(x=305, y=360)
 delete.bind("<Button-1>", delet)
 
 #calculates the expression in the display according to the rules specified at the first comment. the function eval() is used.
-equal = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="=", relief=RAISED)
-equal.place(x=400, y=425)
+equal = Button(root, padx=25, pady=0, font=('arial', 20), bd=5, text="=", relief=RAISED, bg="#898989", fg="white")
+equal.place(x=400, y=555)
 equal.bind("<Button-1>", equalFunc)
 
 #Clears the entire display
-allclear = Button(root, padx=14, pady=0, font=('arial', 20), bd=5, text="AC", relief=RAISED)
+allclear = Button(root, padx=14, pady=0, font=('arial', 20), bd=5, text="AC", relief=RAISED, bg="#C64734", fg="white")
 allclear.place(x=400, y=360)
 allclear.bind("<Button-1>", AC)
 
 #the multiplication button
-mult = Button(root, padx=26, pady=0, font=('arial', 20), bd=5, text="x", relief=RAISED)
-mult.place(x=305, y=490)
+mult = Button(root, padx=26, pady=0, font=('arial', 20), bd=5, text="x", relief=RAISED, bg="#898989", fg="white")
+mult.place(x=305, y=425)
 mult.bind("<Button-1>", concat)
 
 #the division button
-div = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="/", relief=RAISED)
-div.place(x=400, y=490)
+div = Button(root, padx=29, pady=0, font=('arial', 20), bd=5, text="/", relief=RAISED, bg="#898989", fg="white")
+div.place(x=400, y=425)
 div.bind("<Button-1>", concat)
 
 #the Ans button
-answer = Button(root, padx=9, pady=0, font=('arial', 20), bd=5, text="Ans", relief=RAISED)
-answer.place(x=305, y=425)
+answer = Button(root, padx=9, pady=0, font=('arial', 20), bd=5, text="Ans", relief=RAISED, bg="#898989", fg="white")
+answer.place(x=305, y=555)
 answer.bind("<Button-1>", concat)
 
 #the % (modulo) button
-mod = Button(root, padx=5, pady=0, font=('arial', 13), bd=7, text="Mod", relief=RAISED)
+mod = Button(root, padx=5, pady=0, font=('arial', 13), bd=7, text="Mod", relief=RAISED, bg="#333333", fg="white")
 mod.place(x=30, y=295)
 mod.bind("<Button-1>", concat)
 
 #the factorial operator. n!= 1*2*3*...*n
-factorial = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="!", relief=RAISED)
+factorial = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="!", relief=RAISED, bg="#333333", fg="white")
 factorial.place(x=107, y=295)
 factorial.bind("<Button-1>", mathfunc)
 
 #the parenthesis "(" button
-openpt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="(", relief=RAISED)
+openpt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="(", relief=RAISED, bg="#333333", fg="white")
 openpt.place(x=184, y=295)
 openpt.bind("<Button-1>", concat)
 
 #the parenthesis ")" button
-clspt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=")", relief=RAISED)
+clspt = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=")", relief=RAISED, bg="#333333", fg="white")
 clspt.place(x=261, y=295)
 clspt.bind("<Button-1>", concat)
 
 #the power operator. a^n = a*a*a*...*a n times
-pwr = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="^", relief=RAISED)
+pwr = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="^", relief=RAISED, bg="#333333", fg="white")
 pwr.place(x=338, y=295)
 pwr.bind("<Button-1>", concat)
 
 #this operator returns e to the power of the number at the display
-EXPe = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="eˣ", relief=RAISED)
+EXPe = Button(root, padx=16, pady=0, font=('arial', 13), bd=7, text="eˣ", relief=RAISED, bg="#333333", fg="white")
 EXPe.place(x=415, y=295)
 EXPe.bind("<Button-1>", mathfunc)
 
 #cos opeartor
-Bcos = Button(root, padx=7, pady=0, font=('arial', 13), bd=7, text="cos", relief=RAISED)
+Bcos = Button(root, padx=7, pady=0, font=('arial', 13), bd=7, text="cos", relief=RAISED, bg="#333333", fg="white")
 Bcos.place(x=30, y=240)
 Bcos.bind("<Button-1>", mathfunc)
 
 #sin operator
-Bsin = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="sin", relief=RAISED)
+Bsin = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="sin", relief=RAISED, bg="#333333", fg="white")
 Bsin.place(x=107, y=240)
 Bsin.bind("<Button-1>", mathfunc)
 
 #tan operator
-Btan = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="tan", relief=RAISED)
+Btan = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="tan", relief=RAISED, bg="#333333", fg="white")
 Btan.place(x=184, y=240)
 Btan.bind("<Button-1>", mathfunc)
 
 #log operator on base 10
-Blog = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="log", relief=RAISED)
+Blog = Button(root, padx=10, pady=0, font=('arial', 13), bd=7, text="log", relief=RAISED, bg="#333333", fg="white")
 Blog.place(x=261, y=240)
 Blog.bind("<Button-1>", mathfunc)
 
 #ln operator, which is log operator on base e (which is approx 2.718281828)
-Bln = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="ln", relief=RAISED)
+Bln = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="ln", relief=RAISED, bg="#333333", fg="white")
 Bln.place(x=338, y=240)
 Bln.bind("<Button-1>", mathfunc)
 
 #square root operator
-BSQroot = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=chr(8730), relief=RAISED)
+BSQroot = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text=chr(8730), relief=RAISED, bg="#333333", fg="white")
 BSQroot.place(x=415, y=240)
 BSQroot.bind("<Button-1>", mathfunc)
 
 #the inverse of tan operator
-Barctan = Button(root, padx=1, pady=0, font=('arial', 13), bd=7, text="tan⁻¹", relief=RAISED)
+Barctan = Button(root, padx=1, pady=0, font=('arial', 13), bd=7, text="tan⁻¹", relief=RAISED, bg="#333333", fg="white")
 Barctan.place(x=30, y=185)
 Barctan.bind("<Button-1>", mathfunc)
 
 #the inverse of cos operator
-Barccos = Button(root, padx=0, pady=0, font=('arial', 13), bd=7, text="cos⁻¹", relief=RAISED)
+Barccos = Button(root, padx=0, pady=0, font=('arial', 13), bd=7, text="cos⁻¹", relief=RAISED, bg="#333333", fg="white")
 Barccos.place(x=107, y=185)
 Barccos.bind("<Button-1>", mathfunc)
 
 #the inverse of sin operator
-Barcsin = Button(root, padx=3, pady=0, font=('arial', 13), bd=7, text="sin⁻¹", relief=RAISED)
+Barcsin = Button(root, padx=3, pady=0, font=('arial', 13), bd=7, text="sin⁻¹", relief=RAISED, bg="#333333", fg="white")
 Barcsin.place(x=184, y=185)
 Barcsin.bind("<Button-1>", mathfunc)
 
 #the hyperbolic tan operator
-Btanh = Button(root, padx=5, pady= 0, font=('arial', 13), bd=7, text="tanh", relief=RAISED)
+Btanh = Button(root, padx=5, pady= 0, font=('arial', 13), bd=7, text="tanh", relief=RAISED, bg="#333333", fg="white")
 Btanh.place(x=261, y=185)
 Btanh.bind("<Button-1>", mathfunc)
 
 #the hyperbolic cos operator
-Bcosh = Button(root, padx=3, pady= 0, font=('arial', 13), bd=7, text="cosh", relief=RAISED)
+Bcosh = Button(root, padx=3, pady= 0, font=('arial', 13), bd=7, text="cosh", relief=RAISED, bg="#333333", fg="white")
 Bcosh.place(x=338, y=185)
 Btanh.bind("<Button-1>", mathfunc)
 
 #the hyperbolic sin operator
-Bsinh = Button(root, padx=8, pady= 0, font=('arial', 13), bd=7, text="sinh", relief=RAISED)
+Bsinh = Button(root, padx=8, pady= 0, font=('arial', 13), bd=7, text="sinh", relief=RAISED, bg="#333333", fg="white")
 Bsinh.place(x=415, y=185)
 Btanh.bind("<Button-1>", mathfunc)
 
 #the square operator
-Bpow = Button(root, padx=14, pady=0, font=('arial', 13), bd=7, text="x²", relief=RAISED)
+Bpow = Button(root, padx=14, pady=0, font=('arial', 13), bd=7, text="x²", relief=RAISED, bg="#333333", fg="white")
 Bpow.place(x=107, y=130)
 Bpow.bind("<Button-1>", mathfunc)
 
@@ -398,12 +398,12 @@ Bmode.place(x=30, y=130)
 Bmode.bind("<Button-1>", modechange)
 
 #this button represent the pi number (approx 3.141592653589)
-Bpi = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="π", relief=RAISED)
+Bpi = Button(root, padx=15, pady=0, font=('arial', 13), bd=7, text="π", relief=RAISED, bg="#333333", fg="white")
 Bpi.place(x=338, y=130)
 Bpi.bind("<Button-1>", concat)
 
-#this button represent the e number (approx 2.718281828)
-Be = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="e", relief=RAISED)
+#this button represent the e number (approx 2.718281828459)
+Be = Button(root, padx=18, pady=0, font=('arial', 13), bd=7, text="e", relief=RAISED, bg="#333333", fg="white")
 Be.place(x=415, y=130)
 Be.bind("<Button-1>", concat)
 
